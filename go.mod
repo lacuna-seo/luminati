@@ -1,4 +1,4 @@
-module github.com/lacuna-seo/luminati-client
+module github.com/lacuna-seo/luminati
 
 go 1.16
 
