@@ -8,7 +8,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/lacuna-seo/luminati-client/mocks"
+	"github.com/lacuna-seo/luminati/mocks"
 	"github.com/lacuna-seo/stash"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"

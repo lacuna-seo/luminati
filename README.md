@@ -12,7 +12,7 @@ Client for obtaining keyword data via BrightData (Luminati)
 
 ## Install
 
-`go get github.com/lacuna-seo/luminati-client@v0.0.1`
+`go get github.com/lacuna-seo/luminati@v0.0.1`
 
 ## Usage
 

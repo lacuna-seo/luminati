@@ -7,7 +7,7 @@ package main
 import (
 	"fmt"
 	"github.com/enescakir/emoji"
-	"github.com/lacuna-seo/luminati-client"
+	"github.com/lacuna-seo/luminati"
 	"log"
 	"sync"
 	"testing"
