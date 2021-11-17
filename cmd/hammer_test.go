@@ -19,14 +19,13 @@ const Amount = 50
 
 // Hammer the Luminati API.
 func Test_Hammer(t *testing.T) {
-	client, err := luminati.New(&Cache{})
+	client, err := luminati.New()
 	if err != nil {
 		log.Fatalln(err)
 	}
 
 	opts := luminati.Options{
 		Keyword:  "macbook",
-		CheckURL: "https://apple.com",
 		Country:  "us",
 	}
 
@@ -50,7 +49,7 @@ func Test_Hammer(t *testing.T) {
 // Runs and prints the response.
 func run(client luminati.KeywordFinder, opts luminati.Options, wg *sync.WaitGroup, errors int, success int) {
 	defer wg.Done()
-	_, err := client.JSON(opts)
+	_, _, err := client.JSON(opts)
 	if err != nil {
 		fmt.Printf("%v Error: %s\n", emoji.CrossMark, err.Error())
 		errors++
