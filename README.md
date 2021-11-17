@@ -23,13 +23,13 @@ the methods defined below, these are used to decrease the calls to the BrightDat
 ### Export Proxy URL
 
 ```bash
-export LUMINATI_URL=http://luminati.proxy
+export LUMINATI_URL={{ url }}
 ```
 
 Or
 
 ```bash
-echo 'export LUMINATI_URL=http://luminati.proxy' >> ~/.zshenv
+echo 'export LUMINATI_URL={{ url }}' >> ~/.zshenv
 ```
 
 ### Example
