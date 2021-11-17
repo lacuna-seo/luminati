@@ -10,8 +10,8 @@ import (
 	"github.com/enescakir/emoji"
 	"github.com/gookit/color"
 	"github.com/k0kubun/pp"
-	"github.com/lacuna-seo/luminati-client"
-	"github.com/lacuna-seo/luminati-client/cmd/prompts"
+	"github.com/lacuna-seo/luminati"
+	"github.com/lacuna-seo/luminati/cmd/prompts"
 	"github.com/lacuna-seo/stash"
 	"time"
 )
