@@ -16,6 +16,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 	"time"
 )
@@ -67,13 +68,18 @@ func (t *LuminatiTestSuite) TestNew() {
 		cache    stash.Store
 		want     interface{}
 	}{
+		"Empty URL": {
+			"",
+			nil,
+			"proxy url cannot be nil, export LUMINATI_URL",
+		},
 		"Bad URL": {
 			"postgres://user:abc{",
 			nil,
 			"error parsing luminati proxy url",
 		},
 		"Success": {
-			ProxyURL,
+			"https://brightdata.com/proxy",
 			&mocks.Cache{},
 			nil,
 		},
@@ -81,11 +87,8 @@ func (t *LuminatiTestSuite) TestNew() {
 
 	for name, test := range tt {
 		t.Run(name, func() {
-			orig := ProxyURL
-			defer func() {
-				ProxyURL = orig
-			}()
-			ProxyURL = test.proxyURL
+			err := os.Setenv("LUMINATI_URL", test.proxyURL)
+			t.NoError(err)
 
 			got, err := New()
 			if err != nil {
@@ -112,12 +115,12 @@ func (t *LuminatiTestSuite) TestNewWithCache() {
 			"error parsing luminati proxy url",
 		},
 		"Nil Cacher": {
-			ProxyURL,
+			"https://brightdata.com/proxy",
 			nil,
 			"cache interface is nil",
 		},
 		"Success": {
-			ProxyURL,
+			"https://brightdata.com/proxy",
 			&mocks.Cache{},
 			nil,
 		},
@@ -125,11 +128,8 @@ func (t *LuminatiTestSuite) TestNewWithCache() {
 
 	for name, test := range tt {
 		t.Run(name, func() {
-			orig := ProxyURL
-			defer func() {
-				ProxyURL = orig
-			}()
-			ProxyURL = test.proxyURL
+			err := os.Setenv("LUMINATI_URL", test.proxyURL)
+			t.NoError(err)
 
 			got, err := NewWithCache(test.cache, DefaultCacheExpiry)
 			if err != nil {

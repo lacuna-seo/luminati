@@ -6,18 +6,33 @@
 Client for obtaining keyword data via BrightData (Luminati)
 
 [![made-with-Go](https://img.shields.io/badge/Made%20with-Go-1f425f.svg)](http://golang.org)
-[![Build](https://github.com/lacuna-seo/luminati-client/actions/workflows/test.yml/badge.svg)](https://github.com/lacuna-seo/luminati-client/actions/workflows/test.yml)
-[![codecov](https://codecov.io/gh/lacuna-seo/luminati-client/branch/master/graph/badge.svg?token=ITNR5CJ96I)](https://codecov.io/gh/lacuna-seo/luminati-client)
+[![Build](https://github.com/lacuna-seo/luminati/actions/workflows/test.yml/badge.svg)](https://github.com/lacuna-seo/luminati/actions/workflows/test.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/lacuna-seo/luminati)](https://goreportcard.com/report/github.com/lacuna-seo/luminati)
+[![codecov](https://codecov.io/gh/lacuna-seo/luminati/branch/master/graph/badge.svg?token=ITNR5CJ96I)](https://codecov.io/gh/lacuna-seo/luminati)
 
 ## Install
 
-`GOPRIVATE=github.com/lacuna-seo go get github.com/lacuna-seo/luminati-client@v0.0.2`
+`go get github.com/lacuna-seo/luminati-client@v0.0.1`
 
 ## Usage
 
 First create a new client and pass an instance that implements a [stash.Store](https://github.com/lacuna-seo/stash). This could be a Redis Cache, Go Cache or anything that uses
 the methods defined below, these are used to decrease the calls to the BrightData (Luminati) API endpoint. The client has two methods 
 `JSON` and `HTML`, both of which are described [here](https://github.com/lacuna-seo/stash).
+
+### Export Proxy URL
+
+```bash
+export LUMINATI_URL=http://luminati.proxy
+```
+
+Or
+
+```bash
+echo 'export LUMINATI_URL=http://luminati.proxy' >> ~/.zshenv
+```
+
+### Example
 
 ```go
 client, err := New()
