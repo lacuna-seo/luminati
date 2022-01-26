@@ -86,7 +86,7 @@ func New() (*Client, error) {
 
 	client := &Client{
 		bodyReader: ioutil.ReadAll,
-		BaseURL:    "http://www.google.com/search?",
+		BaseURL:    "http://www.google.com/search",
 		client: &http.Client{
 			Timeout: HTTPTimeout,
 			Transport: &http.Transport{

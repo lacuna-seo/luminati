@@ -97,7 +97,7 @@ func (t *LuminatiTestSuite) TestNew() {
 			}
 
 			t.NotNil(got.bodyReader)
-			t.Equal("http://www.google.com/search?", got.BaseURL)
+			t.Equal("http://www.google.com/search", got.BaseURL)
 			t.Equal(HTTPTimeout, got.client.Timeout)
 		})
 	}
@@ -140,7 +140,7 @@ func (t *LuminatiTestSuite) TestNewWithCache() {
 			t.NotNil(got.cache)
 			t.NotNil(got.bodyReader)
 			t.True(got.HasCache)
-			t.Equal("http://www.google.com/search?", got.BaseURL)
+			t.Equal("http://www.google.com/search", got.BaseURL)
 			t.Equal(HTTPTimeout, got.client.Timeout)
 		})
 	}
