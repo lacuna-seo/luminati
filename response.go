@@ -45,11 +45,11 @@ func (r *response) ToSerps(buf []byte) (Serps, error) {
 
 	// Find features before continuing on to get organic
 	// results.
-	for key, value := range m {
+	for key, _ := range m {
 		if stringInSlice(key, excluded) {
 			continue
 		}
-		serps.mappedFeatures[key] = string(value)
+		//serps.mappedFeatures[key] = string(value)
 		serps.Features = append(serps.Features, key)
 	}
 
@@ -61,7 +61,7 @@ func (r *response) ToSerps(buf []byte) (Serps, error) {
 // Organic results are appended.
 func (r *response) GetSerps() Serps {
 	s := Serps{
-		mappedFeatures: make(map[string]string),
+		//mappedFeatures: make(map[string]string),
 	}
 	for _, v := range r.Organic {
 		link, err := cleanURL(v.Link)
