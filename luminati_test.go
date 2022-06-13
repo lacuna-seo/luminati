@@ -8,15 +8,14 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/ainsleyclark/redigo"
 	"github.com/lacuna-seo/luminati/mocks"
-	"github.com/lacuna-seo/stash"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"testing"
 	"time"
 )
@@ -65,7 +64,7 @@ func (t *LuminatiTestSuite) SetupClient(mock func(m *mocks.Cache), timeout bool)
 func (t *LuminatiTestSuite) TestNew() {
 	tt := map[string]struct {
 		proxyURL string
-		cache    stash.Store
+		cache    redigo.Store
 		want     interface{}
 	}{
 		"Empty URL": {
@@ -87,10 +86,7 @@ func (t *LuminatiTestSuite) TestNew() {
 
 	for name, test := range tt {
 		t.Run(name, func() {
-			err := os.Setenv("LUMINATI_URL", test.proxyURL)
-			t.NoError(err)
-
-			got, err := New()
+			got, err := New(test.proxyURL)
 			if err != nil {
 				t.Contains(err.Error(), test.want)
 				return
@@ -106,7 +102,7 @@ func (t *LuminatiTestSuite) TestNew() {
 func (t *LuminatiTestSuite) TestNewWithCache() {
 	tt := map[string]struct {
 		proxyURL string
-		cache    stash.Store
+		cache    redigo.Store
 		want     interface{}
 	}{
 		"Bad URL": {
@@ -128,10 +124,7 @@ func (t *LuminatiTestSuite) TestNewWithCache() {
 
 	for name, test := range tt {
 		t.Run(name, func() {
-			err := os.Setenv("LUMINATI_URL", test.proxyURL)
-			t.NoError(err)
-
-			got, err := NewWithCache(test.cache, DefaultCacheExpiry)
+			got, err := NewWithCache(test.proxyURL, test.cache, DefaultCacheExpiry)
 			if err != nil {
 				t.Contains(err.Error(), test.want)
 				return
@@ -166,7 +159,7 @@ func (t *LuminatiTestSuite) TestClient_JSON() {
 			func(m *mocks.Cache) {
 				m.On("Get", context.Background(), mock.Anything, mock.Anything).
 					Return(fmt.Errorf("error"))
-				m.On("Set", context.Background(), key, []byte("test"), stash.Options{Expiration: DefaultCacheExpiry}).
+				m.On("Set", context.Background(), key, []byte("test"), redigo.Options{Expiration: DefaultCacheExpiry}).
 					Return(fmt.Errorf("response error"))
 			},
 			Meta{CacheKey: "luminati-client-reddico-uk-mobile-json"},
@@ -248,7 +241,7 @@ func (t *LuminatiTestSuite) TestClient_HTML() {
 			func(m *mocks.Cache) {
 				m.On("Get", context.Background(), mock.Anything, mock.Anything).
 					Return(fmt.Errorf("error"))
-				m.On("Set", context.Background(), key, []byte("test"), stash.Options{Expiration: DefaultCacheExpiry}).
+				m.On("Set", context.Background(), key, []byte("test"), redigo.Options{Expiration: DefaultCacheExpiry}).
 					Return(fmt.Errorf("response error"))
 			},
 			Meta{CacheKey: key, RequestURL: "gl=uk&lum_json=0&lum_mobile=1&num=100&pws=0&q=reddico"},
@@ -354,7 +347,7 @@ func (t *LuminatiTestSuite) TestClient_GetResponse() {
 			func(m *mocks.Cache) {
 				m.On("Get", context.Background(), mock.Anything, mock.Anything).
 					Return(fmt.Errorf("error"))
-				m.On("Set", context.Background(), key, []byte("test"), stash.Options{Expiration: DefaultCacheExpiry}).
+				m.On("Set", context.Background(), key, []byte("test"), redigo.Options{Expiration: DefaultCacheExpiry}).
 					Return(fmt.Errorf("cache error"))
 			},
 			ioutil.ReadAll,
@@ -386,7 +379,7 @@ func (t *LuminatiTestSuite) TestClient_GetResponse() {
 			func(m *mocks.Cache) {
 				m.On("Get", context.Background(), mock.Anything, mock.Anything).
 					Return(fmt.Errorf("error"))
-				m.On("Set", context.Background(), key, []byte("test"), stash.Options{Expiration: DefaultCacheExpiry}).
+				m.On("Set", context.Background(), key, []byte("test"), redigo.Options{Expiration: DefaultCacheExpiry}).
 					Return(nil)
 			},
 			ioutil.ReadAll,

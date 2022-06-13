@@ -9,10 +9,8 @@ import (
 	"github.com/briandowns/spinner"
 	"github.com/enescakir/emoji"
 	"github.com/gookit/color"
-	"github.com/k0kubun/pp"
 	"github.com/lacuna-seo/luminati"
 	"github.com/lacuna-seo/luminati/cmd/prompts"
-	"github.com/lacuna-seo/stash"
 	"time"
 )
 
@@ -41,19 +39,14 @@ func main() {
 
 	time.Sleep(1 * time.Second)
 
-	cache, err := stash.Load(stash.NewMemory(5 * time.Minute, 5 * time.Minute))
-	if err != nil {
-		prompts.Exit(err)
-	}
-
-	client, err := luminati.NewWithCache(cache, time.Hour * 1)
+	client, err := luminati.New(cache, time.Hour*1)
 	if err != nil {
 		prompts.Exit(err)
 	}
 
 	opts := luminati.Options{
-		Keyword:  keyword,
-		Country:  country,
+		Keyword: keyword,
+		Country: country,
 	}
 
 	if output == "HTML" {

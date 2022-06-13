@@ -7,14 +7,13 @@ package luminati
 import (
 	"context"
 	"encoding/json"
-	"github.com/lacuna-seo/stash"
+	"github.com/ainsleyclark/redigo"
 	"github.com/pkg/errors"
 	"io"
 	"io/ioutil"
 	"net"
 	"net/http"
 	"net/url"
-	"os"
 	"strings"
 	"time"
 )
@@ -23,7 +22,7 @@ import (
 // from the Luminati API.
 type Client struct {
 	client      *http.Client
-	cache       stash.Store
+	cache       redigo.Store
 	bodyReader  func(io.Reader) ([]byte, error)
 	BaseURL     string
 	CacheExpiry time.Duration
@@ -73,13 +72,12 @@ var (
 
 // New creates a new Luminati client, an error will be returned if
 // there was an issue parsing the proxy URL.
-func New() (*Client, error) {
-	proxyURL := os.Getenv("LUMINATI_URL")
-	if proxyURL == "" {
+func New(uri string) (*Client, error) {
+	if uri == "" {
 		return nil, errors.New("proxy url cannot be nil, export LUMINATI_URL")
 	}
 
-	proxy, err := url.Parse(proxyURL)
+	proxy, err := url.Parse(uri)
 	if err != nil {
 		return nil, errors.Wrap(err, "error parsing luminati proxy url")
 	}
@@ -104,10 +102,10 @@ func New() (*Client, error) {
 }
 
 // NewWithCache creates a new Luminati client, with a cache store and
-// default CacheExpiry, If the  stash.Store (Cache) interface
+// default CacheExpiry, If the redigo.Store (Cache) interface
 // passed is nil and error will be returned.
-func NewWithCache(cache stash.Store, cacheExpiry time.Duration) (*Client, error) {
-	c, err := New()
+func NewWithCache(uri string, cache redigo.Store, cacheExpiry time.Duration) (*Client, error) {
+	c, err := New(uri)
 	if err != nil {
 		return nil, err
 	}
@@ -243,7 +241,7 @@ func (c *Client) fromLuminati(key, url string) ([]byte, error) {
 		return buf, nil
 	}
 
-	err = c.cache.Set(context.Background(), key, buf, stash.Options{
+	err = c.cache.Set(context.Background(), key, buf, redigo.Options{
 		Expiration: c.CacheExpiry,
 	})
 	if err != nil {

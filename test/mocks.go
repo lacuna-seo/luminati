@@ -4,9 +4,11 @@
 
 package stasher
 
-import "github.com/lacuna-seo/stash"
+import (
+	"github.com/ainsleyclark/redigo"
+)
 
 // Cache interface used for mocking.
 type Cache interface {
-	stash.Store
+	redigo.Store
 }
