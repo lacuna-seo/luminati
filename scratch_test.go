@@ -7,7 +7,7 @@ import (
 
 func (t *LuminatiTestSuite) Test_All() {
 	t.T().Skip()
-	client, err := New()
+	client, err := New("https://luminati.com")
 	if err != nil {
 		log.Fatalln(err)
 	}

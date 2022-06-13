@@ -16,26 +16,15 @@ Client for obtaining keyword data via BrightData (Luminati)
 
 ## Usage
 
-First create a new client and pass an instance that implements a [stash.Store](https://github.com/lacuna-seo/stash). This could be a Redis Cache, Go Cache or anything that uses
-the methods defined below, these are used to decrease the calls to the BrightData (Luminati) API endpoint. The client has two methods 
+First create a new client and pass an instance that implements a [redigo.Store](https://github.com/ainsleyclark/redigo). This could be a Redis Cache, Go Cache or anything that uses
+the methods defined below, these are used to decrease the calls to the BrightData (Luminati) API endpoint. The client has two methods
 `JSON` and `HTML`, both of which are described [here](https://github.com/lacuna-seo/stash).
 
-### Export Proxy URL
-
-```bash
-export LUMINATI_URL={{ url }}
-```
-
-Or
-
-```bash
-echo 'export LUMINATI_URL={{ url }}' >> ~/.zshenv
-```
 
 ### Example
 
 ```go
-client, err := New()
+client, err := New("http://lum-customer.com")
 if err != nil {
     log.Fatalln(err)
 }
@@ -74,13 +63,13 @@ if err != nil {
 ```
 
 ### NewWithCache
-Creates a new client with cache. Pass the instance of a `stash.Store` to the function with a default
+Creates a new client with cache. Pass the instance of a `redigo.Store` to the function with a default
 cache expiry time.
 
 ```go
 // Create a new luminati client with cache expiry. Using luminati.DefaultCacheExpiry
 // defaults to 8 hours.
-client, err := luminati.NewWithCache(&Cache{}, luminati.DefaultCacheExpiry)
+client, err := luminati.NewWithCache("http://lum-customer.com", &Cache{}, luminati.DefaultCacheExpiry)
 if err != nil {
     // Handle
 }
@@ -115,7 +104,7 @@ type Options struct {
 
 ## Meta
 
-Meta defines the information sent back from the client. It contains a **cache key** (if the client is using the cache). The request URL 
+Meta defines the information sent back from the client. It contains a **cache key** (if the client is using the cache). The request URL
 used to perform the request and response, request and latency times. It is returned by both of the methods in the `KeywordFinder`.
 ```go
 
@@ -159,7 +148,7 @@ fmt.Printf("%+v\n", meta)
 
 ### Checking URL's
 
-To check Serp data against a URL, call `CheckURL` from the return data. CheckURL obtains the highest ranking 
+To check Serp data against a URL, call `CheckURL` from the return data. CheckURL obtains the highest ranking
 Serp for a given URL and returns a `Domain` struct. Features are also obtained.
 
 ```go
@@ -185,7 +174,7 @@ fmt.Println(html)
 fmt.Printf("%+v\n", meta)
 ```
 
-## Errors 
+## Errors
 
 You are able to establish if the Luminati Client error returned by any of the functions is a timeout error by using
 `luminati.ErrClientTimeout`. You can see an example below.
@@ -200,7 +189,7 @@ if err != nil && err == luminati.ErrClientTimeout {
 ```
 
 ## CLI Usage
-To use the CLI you can either run from source or use the prebuilt exec. You wil be able to pass in arguments 
+To use the CLI you can either run from source or use the prebuilt exec. You wil be able to pass in arguments
 to obtain SERP Data when running.
 
 ### Run from built
