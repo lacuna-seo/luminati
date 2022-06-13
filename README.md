@@ -18,7 +18,7 @@ Client for obtaining keyword data via BrightData (Luminati)
 
 First create a new client and pass an instance that implements a [redigo.Store](https://github.com/ainsleyclark/redigo). This could be a Redis Cache, Go Cache or anything that uses
 the methods defined below, these are used to decrease the calls to the BrightData (Luminati) API endpoint. The client has two methods
-`JSON` and `HTML`, both of which are described [here](https://github.com/lacuna-seo/stash).
+`JSON` and `HTML`, both of which are described [here](https://github.com/ainsleyclark/redigo).
 
 
 ### Example
