@@ -23,8 +23,8 @@ func (t *LuminatiTestSuite) TestResponse_ToSerps() {
 			map[string]interface{}{"images": 1},
 			response{},
 			Serps{
-				Features:       []string{"images"},
-				mappedFeatures: map[string]string{"images": "1"},
+				Features: []string{"images"},
+				//mappedFeatures: map[string]string{"images": "1"},
 			},
 		},
 		"Excluded Features": {
@@ -34,8 +34,8 @@ func (t *LuminatiTestSuite) TestResponse_ToSerps() {
 			},
 			response{},
 			Serps{
-				Features:       []string{"images"},
-				mappedFeatures: map[string]string{"images": "1"},
+				Features: []string{"images"},
+				//mappedFeatures: map[string]string{"images": "1"},
 			},
 		},
 		"Organic": {
@@ -44,8 +44,8 @@ func (t *LuminatiTestSuite) TestResponse_ToSerps() {
 				{Rank: 1, Link: "https://reddico.co.uk", Description: "SEO"},
 			}},
 			Serps{
-				Organic:        []Organic{{Rank: 1, Link: "https://reddico.co.uk", Description: "SEO"}},
-				mappedFeatures: make(map[string]string),
+				Organic: []Organic{{Rank: 1, Link: "https://reddico.co.uk", Description: "SEO"}},
+				//mappedFeatures: make(map[string]string),
 			},
 		},
 		"Organic Bad URL": {
@@ -54,7 +54,7 @@ func (t *LuminatiTestSuite) TestResponse_ToSerps() {
 				{Rank: 1, Link: "postgres://user:abc{", Description: "SEO"},
 			}},
 			Serps{
-				mappedFeatures: make(map[string]string),
+				//mappedFeatures: make(map[string]string),
 			},
 		},
 		"Organic With Features": {
@@ -65,9 +65,9 @@ func (t *LuminatiTestSuite) TestResponse_ToSerps() {
 				{Rank: 1, Link: "https://reddico.co.uk", Description: "SEO"},
 			}},
 			Serps{
-				Organic:        []Organic{{Rank: 1, Link: "https://reddico.co.uk", Description: "SEO"}},
-				Features:       []string{"images"},
-				mappedFeatures: map[string]string{"images": "1"},
+				Organic:  []Organic{{Rank: 1, Link: "https://reddico.co.uk", Description: "SEO"}},
+				Features: []string{"images"},
+				//mappedFeatures: map[string]string{"images": "1"},
 			},
 		},
 	}

@@ -196,9 +196,9 @@ func (t *LuminatiTestSuite) TestClient_JSON() {
 			Meta{CacheKey: "luminati-client-reddico-uk-mobile-json"},
 			Serps{
 				Features: []string{"images"},
-				mappedFeatures: map[string]string{
-					"images": "1",
-				},
+				//mappedFeatures: map[string]string{
+				//	"images": "1",
+				//},
 			},
 		},
 	}

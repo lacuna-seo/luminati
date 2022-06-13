@@ -45,7 +45,7 @@ func (r *response) ToSerps(buf []byte) (Serps, error) {
 
 	// Find features before continuing on to get organic
 	// results.
-	for key, _ := range m {
+	for key, _ := range m { //nolint
 		if stringInSlice(key, excluded) {
 			continue
 		}
