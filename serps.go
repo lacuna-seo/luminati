@@ -12,9 +12,9 @@ type (
 	// Serps defines the collection to be returned from
 	// the client.
 	Serps struct {
-		Organic        []Organic `json:"serps"`
-		Features       []string  `json:"features"`
-		mappedFeatures map[string]string
+		Organic  []Organic `json:"serps"`
+		Features []string  `json:"features"`
+		//mappedFeatures map[string]string
 	}
 	// Domain are URL specific results returned by
 	// Serps.CheckURL
@@ -68,10 +68,10 @@ func (s *Serps) CheckURL(url string) Domain {
 // the domain ranks for.
 func (s *Serps) getFeatures(url string) string {
 	features := ""
-	for key, value := range s.mappedFeatures {
-		if strings.Contains(value, url) {
-			features += key + ","
-		}
-	}
+	//for key, value := range s.mappedFeatures {
+	//	if strings.Contains(value, url) {
+	//		features += key + ","
+	//	}
+	//}
 	return strings.TrimSuffix(features, ",")
 }
