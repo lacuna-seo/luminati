@@ -142,8 +142,17 @@ func (c *Client) JSON(o Options) (Serps, Meta, error) {
 
 	defer func() { meta = meta.process() }()
 
+	// Try and retrieve in cache.
+	if c.HasCache {
+		var s Serps
+		err := c.cache.Get(context.Background(), meta.CacheKey, &s)
+		if err == nil {
+			return s, meta, err
+		}
+	}
+
 	// Obtain the response from either cache or the API.
-	buf, err := c.getResponse(meta.CacheKey, meta.RequestURL)
+	buf, err := c.fromLuminati(meta.RequestURL)
 	if err != nil {
 		return Serps{}, meta, err
 	}
@@ -157,6 +166,17 @@ func (c *Client) JSON(o Options) (Serps, Meta, error) {
 
 	// Get Serp data from the response.
 	serps, err := res.ToSerps(buf)
+
+	// Store in cache
+	if c.HasCache {
+		err = c.cache.Set(context.Background(), meta.CacheKey, buf, redigo.Options{
+			Expiration: c.CacheExpiry,
+		})
+		if err != nil {
+			return Serps{}, meta, err
+		}
+	}
+
 	return serps, meta, err
 }
 
@@ -188,27 +208,32 @@ func (c *Client) HTML(o Options) (string, Meta, error) {
 
 	defer func() { meta = meta.process() }()
 
+	// Try and retrieve in cache.
+	if c.HasCache {
+		var html string
+		err := c.cache.Get(context.Background(), meta.CacheKey, &s)
+		if err == nil {
+			return html, meta, err
+		}
+	}
+
 	// Obtain the response from either cache or the API.
-	html, err := c.getResponse(meta.CacheKey, meta.RequestURL)
+	html, err := c.fromLuminati(meta.RequestURL)
 	if err != nil {
 		return "", meta.process(), err
 	}
 
-	return string(html), meta, nil
-}
+	// Store in cache
+	if c.HasCache {
+		err = c.cache.Set(context.Background(), meta.CacheKey, buf, redigo.Options{
+			Expiration: c.CacheExpiry,
+		})
+		if err != nil {
+			return "", meta, err
+		}
+	}
 
-// getResponse returns the cached response buffer it has it in memory.
-// If it doesn't it will proceed to make a request to the API.
-func (c *Client) getResponse(key, url string) ([]byte, error) {
-	if !c.HasCache {
-		return c.fromLuminati(key, url)
-	}
-	var buf []byte
-	err := c.cache.Get(context.Background(), key, &buf)
-	if err == nil {
-		return buf, nil
-	}
-	return c.fromLuminati(key, url)
+	return string(html), meta, nil
 }
 
 // fromLuminati obtains the response data from the luminati API
@@ -217,7 +242,7 @@ func (c *Client) getResponse(key, url string) ([]byte, error) {
 // Returns errors.INTERNAL if the request could not be created, the
 // request failed, the body could not be read or the cache
 // could not be set.
-func (c *Client) fromLuminati(key, url string) ([]byte, error) {
+func (c *Client) fromLuminati(url string) ([]byte, error) {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "error creating request")
@@ -235,17 +260,6 @@ func (c *Client) fromLuminati(key, url string) ([]byte, error) {
 	buf, err := c.bodyReader(resp.Body)
 	if err != nil {
 		return nil, errors.Wrap(err, "luminati body read failed")
-	}
-
-	if !c.HasCache {
-		return buf, nil
-	}
-
-	err = c.cache.Set(context.Background(), key, buf, redigo.Options{
-		Expiration: c.CacheExpiry,
-	})
-	if err != nil {
-		return nil, err
 	}
 
 	return buf, nil
