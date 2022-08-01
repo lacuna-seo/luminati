@@ -211,7 +211,7 @@ func (c *Client) HTML(o Options) (string, Meta, error) {
 	// Try and retrieve in cache.
 	if c.HasCache {
 		var html string
-		err := c.cache.Get(context.Background(), meta.CacheKey, &s)
+		err := c.cache.Get(context.Background(), meta.CacheKey, &html)
 		if err == nil {
 			return html, meta, err
 		}
@@ -225,7 +225,7 @@ func (c *Client) HTML(o Options) (string, Meta, error) {
 
 	// Store in cache
 	if c.HasCache {
-		err = c.cache.Set(context.Background(), meta.CacheKey, buf, redigo.Options{
+		err = c.cache.Set(context.Background(), meta.CacheKey, html, redigo.Options{
 			Expiration: c.CacheExpiry,
 		})
 		if err != nil {

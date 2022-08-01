@@ -12,7 +12,6 @@ import (
 	"github.com/lacuna-seo/luminati/mocks"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
-	"io"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -283,135 +282,135 @@ func (t *LuminatiTestSuite) TestClient_HTML() {
 	}
 }
 
-func (t *LuminatiTestSuite) TestClient_GetResponse() {
-	var (
-		cacheFail = func(m *mocks.Cache) {
-			m.On("Get", context.Background(), mock.Anything, mock.Anything).
-				Return(fmt.Errorf("error"))
-		}
-		key = PrefixCacheKey + "-reddico-uk-mobile-json"
-	)
-
-	tt := map[string]struct {
-		url        string
-		mock       func(m *mocks.Cache)
-		bodyReader func(io.Reader) ([]byte, error)
-		timeout    bool
-		withCache  bool
-		want       interface{}
-	}{
-		"From Cache": {
-			"",
-			func(m *mocks.Cache) {
-				var buf []byte
-				m.On("Get", context.Background(), key, &buf).
-					Return(nil).
-					Run(func(args mock.Arguments) {
-						arg := args.Get(2).(*[]byte)
-						*arg = []byte("data")
-					})
-			},
-			ioutil.ReadAll,
-			false,
-			true,
-			"data",
-		},
-		"Bad Request": {
-			"@#@#$$%$",
-			cacheFail,
-			ioutil.ReadAll,
-			false,
-			true,
-			"error creating request",
-		},
-		"Do Error": {
-			"doerror",
-			cacheFail,
-			ioutil.ReadAll,
-			false,
-			true,
-			"luminati client request failed",
-		},
-		"Read Error": {
-			"https://google.com",
-			cacheFail,
-			func(reader io.Reader) ([]byte, error) {
-				return nil, fmt.Errorf("error")
-			},
-			false,
-			true,
-			"luminati body read failed",
-		},
-		"Cache Error": {
-			"",
-			func(m *mocks.Cache) {
-				m.On("Get", context.Background(), mock.Anything, mock.Anything).
-					Return(fmt.Errorf("error"))
-				m.On("Set", context.Background(), key, []byte("test"), redigo.Options{Expiration: DefaultCacheExpiry}).
-					Return(fmt.Errorf("cache error"))
-			},
-			ioutil.ReadAll,
-			false,
-			true,
-			"cache error",
-		},
-		"Timeout": {
-			"",
-			cacheFail,
-			ioutil.ReadAll,
-			true,
-			true,
-			ErrClientTimeout.Error(),
-		},
-		"Prevent Cache": {
-			"",
-			func(m *mocks.Cache) {
-				m.On("Get", context.Background(), mock.Anything, mock.Anything).
-					Return(fmt.Errorf("error"))
-			},
-			ioutil.ReadAll,
-			false,
-			false,
-			"test",
-		},
-		"Success": {
-			"",
-			func(m *mocks.Cache) {
-				m.On("Get", context.Background(), mock.Anything, mock.Anything).
-					Return(fmt.Errorf("error"))
-				m.On("Set", context.Background(), key, []byte("test"), redigo.Options{Expiration: DefaultCacheExpiry}).
-					Return(nil)
-			},
-			ioutil.ReadAll,
-			false,
-			true,
-			"test",
-		},
-	}
-
-	for name, test := range tt {
-		t.Run(name, func() {
-			c, teardown := t.SetupClient(test.mock, test.timeout)
-			defer teardown()
-
-			if test.url == "" {
-				test.url = c.BaseURL
-			}
-
-			c.bodyReader = test.bodyReader
-
-			if !test.withCache {
-				c.cache = nil
-				c.HasCache = false
-			}
-
-			got, err := c.getResponse(key, test.url)
-			if err != nil {
-				t.Contains(err.Error(), test.want)
-				return
-			}
-
-			t.Equal(test.want, string(got))
-		})
-	}
-}
+//func (t *LuminatiTestSuite) TestClient_GetResponse() {
+//	var (
+//		cacheFail = func(m *mocks.Cache) {
+//			m.On("Get", context.Background(), mock.Anything, mock.Anything).
+//				Return(fmt.Errorf("error"))
+//		}
+//		key = PrefixCacheKey + "-reddico-uk-mobile-json"
+//	)
+//
+//	tt := map[string]struct {
+//		url        string
+//		mock       func(m *mocks.Cache)
+//		bodyReader func(io.Reader) ([]byte, error)
+//		timeout    bool
+//		withCache  bool
+//		want       interface{}
+//	}{
+//		"From Cache": {
+//			"",
+//			func(m *mocks.Cache) {
+//				var buf []byte
+//				m.On("Get", context.Background(), key, &buf).
+//					Return(nil).
+//					Run(func(args mock.Arguments) {
+//						arg := args.Get(2).(*[]byte)
+//						*arg = []byte("data")
+//					})
+//			},
+//			ioutil.ReadAll,
+//			false,
+//			true,
+//			"data",
+//		},
+//		"Bad Request": {
+//			"@#@#$$%$",
+//			cacheFail,
+//			ioutil.ReadAll,
+//			false,
+//			true,
+//			"error creating request",
+//		},
+//		"Do Error": {
+//			"doerror",
+//			cacheFail,
+//			ioutil.ReadAll,
+//			false,
+//			true,
+//			"luminati client request failed",
+//		},
+//		"Read Error": {
+//			"https://google.com",
+//			cacheFail,
+//			func(reader io.Reader) ([]byte, error) {
+//				return nil, fmt.Errorf("error")
+//			},
+//			false,
+//			true,
+//			"luminati body read failed",
+//		},
+//		"Cache Error": {
+//			"",
+//			func(m *mocks.Cache) {
+//				m.On("Get", context.Background(), mock.Anything, mock.Anything).
+//					Return(fmt.Errorf("error"))
+//				m.On("Set", context.Background(), key, []byte("test"), redigo.Options{Expiration: DefaultCacheExpiry}).
+//					Return(fmt.Errorf("cache error"))
+//			},
+//			ioutil.ReadAll,
+//			false,
+//			true,
+//			"cache error",
+//		},
+//		"Timeout": {
+//			"",
+//			cacheFail,
+//			ioutil.ReadAll,
+//			true,
+//			true,
+//			ErrClientTimeout.Error(),
+//		},
+//		"Prevent Cache": {
+//			"",
+//			func(m *mocks.Cache) {
+//				m.On("Get", context.Background(), mock.Anything, mock.Anything).
+//					Return(fmt.Errorf("error"))
+//			},
+//			ioutil.ReadAll,
+//			false,
+//			false,
+//			"test",
+//		},
+//		"Success": {
+//			"",
+//			func(m *mocks.Cache) {
+//				m.On("Get", context.Background(), mock.Anything, mock.Anything).
+//					Return(fmt.Errorf("error"))
+//				m.On("Set", context.Background(), key, []byte("test"), redigo.Options{Expiration: DefaultCacheExpiry}).
+//					Return(nil)
+//			},
+//			ioutil.ReadAll,
+//			false,
+//			true,
+//			"test",
+//		},
+//	}
+//
+//	for name, test := range tt {
+//		t.Run(name, func() {
+//			c, teardown := t.SetupClient(test.mock, test.timeout)
+//			defer teardown()
+//
+//			if test.url == "" {
+//				test.url = c.BaseURL
+//			}
+//
+//			c.bodyReader = test.bodyReader
+//
+//			if !test.withCache {
+//				c.cache = nil
+//				c.HasCache = false
+//			}
+//
+//			got, err := c.getResponse(key, test.url)
+//			if err != nil {
+//				t.Contains(err.Error(), test.want)
+//				return
+//			}
+//
+//			t.Equal(test.want, string(got))
+//		})
+//	}
+//}
