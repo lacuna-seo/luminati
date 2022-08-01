@@ -169,7 +169,7 @@ func (c *Client) JSON(o Options) (Serps, Meta, error) {
 
 	// Store in cache
 	if c.HasCache {
-		err = c.cache.Set(context.Background(), meta.CacheKey, buf, redigo.Options{
+		err = c.cache.Set(context.Background(), meta.CacheKey, serps, redigo.Options{
 			Expiration: c.CacheExpiry,
 		})
 		if err != nil {
