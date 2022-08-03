@@ -5,10 +5,14 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"github.com/ainsleyclark/redigo"
 	"github.com/briandowns/spinner"
 	"github.com/enescakir/emoji"
+	"github.com/go-redis/redis/v8"
 	"github.com/gookit/color"
+	"github.com/k0kubun/pp/v3"
 	"github.com/lacuna-seo/luminati"
 	"github.com/lacuna-seo/luminati/cmd/prompts"
 	"time"
@@ -27,6 +31,16 @@ func main() {
 		country = "uk"
 	}
 
+	cache := redigo.New(&redis.Options{
+		Addr: "127.0.0.1:6379",
+		DB:   14,
+	}, redigo.NewGoJSONEncoder())
+
+	err := cache.Ping(context.Background())
+	if err != nil {
+		prompts.Exit(err)
+	}
+
 	fmt.Printf("%v Keyword: %s\n", emoji.OpenBook, keyword)
 	fmt.Printf("%v URL: %s\n", emoji.Link, url)
 	fmt.Printf("%v Country: %s\n", emoji.GlobeShowingEuropeAfrica, country)
@@ -39,7 +53,7 @@ func main() {
 
 	time.Sleep(1 * time.Second)
 
-	client, err := luminati.New(cache, time.Hour*1)
+	client, err := luminati.NewWithCache("ENTER URL HERE", cache, time.Hour*8)
 	if err != nil {
 		prompts.Exit(err)
 	}
