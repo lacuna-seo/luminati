@@ -167,7 +167,7 @@ func (c *Client) JSON(o Options) (Serps, Meta, error) {
 	serps, err := res.ToSerps(buf)
 
 	// Store in cache
-	if c.HasCache {
+	if c.HasCache && len(serps.Organic) > 0 {
 		_ = c.cache.Set(context.Background(), meta.CacheKey, serps, redigo.Options{
 			Expiration: c.CacheExpiry,
 		})
