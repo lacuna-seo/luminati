@@ -80,14 +80,7 @@ func (o *Options) cacheKey(html, hasCache bool) string {
 	if html {
 		format = "html"
 	}
-	return fmt.Sprintf("%s-%s-%s-%s-%s", PrefixCacheKey, alphaNum(strings.ReplaceAll(o.Keyword, " ", "-")), o.Country, device, format)
-}
-
-// alphaNum removes any characters from a string that are
-// not letters or numbers.
-func alphaNum(input string) string {
-	reg := regexp.MustCompile("[^A-Za-z0-9-]+")
-	return reg.ReplaceAllString(input, "")
+	return fmt.Sprintf("%s-%s-%s-%s-%s", PrefixCacheKey, strings.ToLower(alphaNum(o.Keyword)), o.Country, device, format)
 }
 
 // getRequestURL returns the URL for the request to Luminati.
@@ -103,4 +96,23 @@ func (o *Options) setDefaultParam(key, value string) {
 		return
 	}
 	o.Params.Set(key, value)
+}
+
+// alphaNum removes any characters from a string that are
+// not letters or numbers.
+func alphaNum(input string) string {
+	reg := regexp.MustCompile("[^A-Za-z0-9-]+")
+	spaceReg := regexp.MustCompile(" +")
+	colonReg := regexp.MustCompile(`\:+`)
+	dashReg := regexp.MustCompile(`\-+`)
+	dotReg := regexp.MustCompile(`\.+`)
+	return reg.ReplaceAllString(
+		dashReg.ReplaceAllString(
+			colonReg.ReplaceAllString(
+				spaceReg.ReplaceAllString(
+					dotReg.ReplaceAllString(input, "-"),
+					"-"),
+				"-"),
+			"-"),
+		"")
 }

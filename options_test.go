@@ -5,7 +5,9 @@
 package luminati
 
 import (
+	"github.com/stretchr/testify/assert"
 	"net/url"
+	"testing"
 )
 
 func (t *LuminatiTestSuite) TestOptions_Validate() {
@@ -132,4 +134,10 @@ func (t *LuminatiTestSuite) TestOptions_SetDefaultParam() {
 			t.Equal(test.want, test.input)
 		})
 	}
+}
+
+func TestAlphaNum(t *testing.T) {
+	got := alphaNum(`"Disabled driving" site:uk intitle:"external sites" -wordpress.org -blogspot -pinterest -pdf -docx -doc -.info -.biz`)
+	want := "Disabled-driving-site-uk-intitle-external-sites-wordpress-org-blogspot-pinterest-pdf-docx-doc-info-biz"
+	assert.Equal(t, want, got)
 }
