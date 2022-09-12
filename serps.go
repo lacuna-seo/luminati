@@ -66,7 +66,7 @@ func (s *Serps) CheckURL(url string) Domain {
 
 // getFeatures obtains a comma delimited list of features that
 // the domain ranks for.
-func (s *Serps) getFeatures(url string) string {
+func (s *Serps) getFeatures(url string) string { //nolint
 	features := ""
 	//for key, value := range s.mappedFeatures {
 	//	if strings.Contains(value, url) {

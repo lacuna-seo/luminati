@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"github.com/ainsleyclark/redigo"
 	"github.com/briandowns/spinner"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/enescakir/emoji"
 	"github.com/go-redis/redis/v8"
 	"github.com/gookit/color"
@@ -53,13 +54,13 @@ func main() {
 
 	time.Sleep(1 * time.Second)
 
-	client, err := luminati.NewWithCache("ENTER URL HERE", cache, time.Hour*8)
+	client, err := luminati.NewWithCache("http://lum-customer-reddico-zone-residential_serp:ugi9ska3olge@zproxy.lum-superproxy.io:22225", cache, time.Hour*8)
 	if err != nil {
 		prompts.Exit(err)
 	}
 
 	opts := luminati.Options{
-		Keyword: keyword,
+		Keyword: `"disabled driving" site:uk intitle:" useful resources"`,
 		Country: country,
 	}
 
@@ -71,6 +72,8 @@ func main() {
 	if err != nil {
 		prompts.Exit(err)
 	}
+
+	spew.Dump(meta)
 
 	pp.Fatalln(serps)
 	pp.Fatalln(serps.CheckURL(url))

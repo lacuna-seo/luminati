@@ -10,7 +10,6 @@ import (
 	"github.com/ainsleyclark/redigo"
 	"github.com/pkg/errors"
 	"io"
-	"io/ioutil"
 	"net"
 	"net/http"
 	"net/url"
@@ -83,7 +82,7 @@ func New(uri string) (*Client, error) {
 	}
 
 	client := &Client{
-		bodyReader: ioutil.ReadAll,
+		bodyReader: io.ReadAll,
 		BaseURL:    "http://www.google.com/search",
 		client: &http.Client{
 			Timeout: HTTPTimeout,
@@ -145,7 +144,7 @@ func (c *Client) JSON(o Options) (Serps, Meta, error) {
 	// Try and retrieve in cache.
 	if c.HasCache {
 		var s Serps
-		err := c.cache.Get(context.Background(), meta.CacheKey, &s)
+		err = c.cache.Get(context.Background(), meta.CacheKey, &s)
 		if err == nil {
 			return s, meta, err
 		}
@@ -169,12 +168,9 @@ func (c *Client) JSON(o Options) (Serps, Meta, error) {
 
 	// Store in cache
 	if c.HasCache {
-		err = c.cache.Set(context.Background(), meta.CacheKey, serps, redigo.Options{
+		_ = c.cache.Set(context.Background(), meta.CacheKey, serps, redigo.Options{
 			Expiration: c.CacheExpiry,
 		})
-		if err != nil {
-			return Serps{}, meta, err
-		}
 	}
 
 	return serps, meta, err
@@ -211,7 +207,7 @@ func (c *Client) HTML(o Options) (string, Meta, error) {
 	// Try and retrieve in cache.
 	if c.HasCache {
 		var html string
-		err := c.cache.Get(context.Background(), meta.CacheKey, &html)
+		err = c.cache.Get(context.Background(), meta.CacheKey, &html)
 		if err == nil {
 			return html, meta, err
 		}
@@ -225,12 +221,9 @@ func (c *Client) HTML(o Options) (string, Meta, error) {
 
 	// Store in cache
 	if c.HasCache {
-		err = c.cache.Set(context.Background(), meta.CacheKey, html, redigo.Options{
+		_ = c.cache.Set(context.Background(), meta.CacheKey, html, redigo.Options{
 			Expiration: c.CacheExpiry,
 		})
-		if err != nil {
-			return "", meta, err
-		}
 	}
 
 	return string(html), meta, nil

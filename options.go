@@ -8,6 +8,8 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
+	"regexp"
+	"strings"
 )
 
 // Options contains the data used for obtaining serp
@@ -78,7 +80,14 @@ func (o *Options) cacheKey(html, hasCache bool) string {
 	if html {
 		format = "html"
 	}
-	return fmt.Sprintf("%s-%s-%s-%s-%s", PrefixCacheKey, o.Keyword, o.Country, device, format)
+	return fmt.Sprintf("%s-%s-%s-%s-%s", PrefixCacheKey, alphaNum(strings.ReplaceAll(o.Keyword, " ", "-")), o.Country, device, format)
+}
+
+// alphaNum removes any characters from a string that are
+// not letters or numbers.
+func alphaNum(input string) string {
+	reg := regexp.MustCompile("[^A-Za-z0-9-]+")
+	return reg.ReplaceAllString(input, "")
 }
 
 // getRequestURL returns the URL for the request to Luminati.
