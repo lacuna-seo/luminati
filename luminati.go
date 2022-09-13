@@ -243,7 +243,9 @@ func (c *Client) fromLuminati(ctx context.Context, url string) ([]byte, error) {
 	req = req.WithContext(ctx)
 
 	resp, err := c.client.Do(req)
-	if err != nil && strings.Contains(err.Error(), context.DeadlineExceeded.Error()) {
+	if err != nil && err == context.Canceled {
+		return nil, context.Canceled
+	} else if err != nil && strings.Contains(err.Error(), context.DeadlineExceeded.Error()) {
 		return nil, ErrClientTimeout
 	} else if err != nil {
 		return nil, errors.Wrap(err, "luminati client request failed")
