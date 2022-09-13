@@ -1,6 +1,7 @@
 package luminati
 
 import (
+	"context"
 	"fmt"
 	"log"
 )
@@ -12,7 +13,7 @@ func (t *LuminatiTestSuite) Test_All() {
 		log.Fatalln(err)
 	}
 
-	serps, meta, err := client.JSON(Options{
+	serps, meta, err := client.JSON(context.Background(), Options{
 		Keyword: "macbook",
 		Country: "us",
 		Params:  nil,

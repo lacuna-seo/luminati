@@ -122,7 +122,7 @@ func NewWithCache(uri string, cache redigo.Store, cacheExpiry time.Duration) (*C
 //
 // Returns an if the options failed validation, the request failed
 // or if there was a problem unmarshalling the response.
-func (c *Client) JSON(o Options) (Serps, Meta, error) {
+func (c *Client) JSON(ctx context.Context, o Options) (Serps, Meta, error) {
 	// For request/response times.
 	now := time.Now()
 
@@ -144,14 +144,14 @@ func (c *Client) JSON(o Options) (Serps, Meta, error) {
 	// Try and retrieve in cache.
 	if c.HasCache {
 		var s Serps
-		err = c.cache.Get(context.Background(), meta.CacheKey, &s)
+		err = c.cache.Get(ctx, meta.CacheKey, &s)
 		if err == nil {
 			return s, meta, err
 		}
 	}
 
 	// Obtain the response from either cache or the API.
-	buf, err := c.fromLuminati(meta.RequestURL)
+	buf, err := c.fromLuminati(ctx, meta.RequestURL)
 	if err != nil {
 		return Serps{}, meta, err
 	}
@@ -181,7 +181,7 @@ func (c *Client) JSON(o Options) (Serps, Meta, error) {
 //
 // Returns an if the options failed validation or the request
 // failed.
-func (c *Client) HTML(o Options) (string, Meta, error) {
+func (c *Client) HTML(ctx context.Context, o Options) (string, Meta, error) {
 	// For request/response times.
 	now := time.Now()
 
@@ -214,7 +214,7 @@ func (c *Client) HTML(o Options) (string, Meta, error) {
 	}
 
 	// Obtain the response from either cache or the API.
-	html, err := c.fromLuminati(meta.RequestURL)
+	html, err := c.fromLuminati(ctx, meta.RequestURL)
 	if err != nil {
 		return "", meta.process(), err
 	}
@@ -235,11 +235,12 @@ func (c *Client) HTML(o Options) (string, Meta, error) {
 // Returns errors.INTERNAL if the request could not be created, the
 // request failed, the body could not be read or the cache
 // could not be set.
-func (c *Client) fromLuminati(url string) ([]byte, error) {
+func (c *Client) fromLuminati(ctx context.Context, url string) ([]byte, error) {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "error creating request")
 	}
+	req = req.WithContext(ctx)
 
 	resp, err := c.client.Do(req)
 	if err != nil && strings.Contains(err.Error(), context.DeadlineExceeded.Error()) {

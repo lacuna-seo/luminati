@@ -208,7 +208,7 @@ func (t *LuminatiTestSuite) TestClient_JSON() {
 			c, teardown := t.SetupClient(test.mock, false)
 			defer teardown()
 
-			got, meta, err := c.JSON(test.input)
+			got, meta, err := c.JSON(context.Background(), test.input)
 			t.Equal(test.meta.CacheKey, meta.CacheKey)
 			t.Contains(meta.RequestURL, test.meta.RequestURL)
 
@@ -269,7 +269,7 @@ func (t *LuminatiTestSuite) TestClient_HTML() {
 			c, teardown := t.SetupClient(test.mock, false)
 			defer teardown()
 
-			got, meta, err := c.HTML(test.input)
+			got, meta, err := c.HTML(context.Background(), test.input)
 			t.Equal(test.meta.CacheKey, meta.CacheKey)
 			t.Contains(meta.RequestURL, test.meta.RequestURL)
 
