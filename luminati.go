@@ -36,14 +36,14 @@ type KeywordFinder interface {
 	//
 	// Returns an if the options failed validation, the request failed
 	// or if there was a problem unmarshalling the response.
-	JSON(o Options) (Serps, Meta, error)
+	JSON(ctx context.Context, o Options) (Serps, Meta, error)
 
 	// HTML Retrieves raw HTML from the search and returns a string
 	// of the result.
 	//
 	// Returns an if the options failed validation or the request
 	// failed.
-	HTML(o Options) (string, Meta, error)
+	HTML(ctx context.Context, o Options) (string, Meta, error)
 }
 
 const (
