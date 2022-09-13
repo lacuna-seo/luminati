@@ -7,6 +7,7 @@ package luminati
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/ainsleyclark/redigo"
 	"github.com/pkg/errors"
 	"io"
@@ -241,6 +242,10 @@ func (c *Client) fromLuminati(ctx context.Context, url string) ([]byte, error) {
 		return nil, errors.Wrap(err, "error creating request")
 	}
 	req = req.WithContext(ctx)
+
+	if err != nil {
+		fmt.Println(err.Error())
+	}
 
 	resp, err := c.client.Do(req)
 	if err != nil && err == context.Canceled {
