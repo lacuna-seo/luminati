@@ -50,7 +50,7 @@ type KeywordFinder interface {
 const (
 	// HTTPTimeout is the time limit for requests made by this
 	// Client.
-	HTTPTimeout = time.Second * 30
+	HTTPTimeout = time.Minute * 5
 	// IdleConnections controls the maximum number of idle (keep-alive)
 	// connections across all hosts. Zero means no limit.
 	IdleConnections = 50
