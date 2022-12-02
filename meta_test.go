@@ -6,13 +6,6 @@ package luminati
 
 import "time"
 
-func (t *LuminatiTestSuite) TestMeta_WasCached() {
-	m := Meta{}
-	t.False(m.WasCached())
-	m = Meta{CacheKey: "cache-key"}
-	t.True(m.WasCached())
-}
-
 func (t *LuminatiTestSuite) TestMeta_Process() {
 	meta := Meta{
 		CacheKey:    "cache-key",

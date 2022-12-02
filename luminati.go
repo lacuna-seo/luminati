@@ -7,7 +7,6 @@ package luminati
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"github.com/ainsleyclark/redigo"
 	"github.com/pkg/errors"
 	"io"
@@ -203,13 +202,18 @@ func (c *Client) HTML(ctx context.Context, o Options) (string, Meta, error) {
 		RequestTime: now,
 	}
 
-	defer func() { meta = meta.process() }()
+	wasCached := false
+	defer func() {
+		meta = meta.process()
+		meta.WasCached = wasCached
+	}()
 
 	// Try and retrieve in cache.
 	if c.HasCache {
 		var html string
 		err = c.cache.Get(context.Background(), meta.CacheKey, &html)
 		if err == nil {
+			wasCached = true
 			return html, meta, err
 		}
 	}
@@ -242,10 +246,6 @@ func (c *Client) fromLuminati(ctx context.Context, url string) ([]byte, error) {
 		return nil, errors.Wrap(err, "error creating request")
 	}
 	req = req.WithContext(ctx)
-
-	if err != nil {
-		fmt.Println(err.Error())
-	}
 
 	resp, err := c.client.Do(req)
 	if err != nil && err == context.Canceled {

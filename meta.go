@@ -27,11 +27,8 @@ type Meta struct {
 	// LatencyTime is the duration in which the client took
 	// to perform the request.
 	LatencyTime time.Duration
-}
-
-// WasCached determines if the request was cached.
-func (m *Meta) WasCached() bool {
-	return m.CacheKey != ""
+	// WasCached determines if the request was cached.
+	WasCached bool
 }
 
 // process adds the ResponseTime & LatencyTime to the
