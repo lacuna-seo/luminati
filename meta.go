@@ -29,6 +29,8 @@ type Meta struct {
 	LatencyTime time.Duration
 	// WasCached determines if the request was cached.
 	WasCached bool
+	// Body is the request body sent back from Luminati.
+	Body string
 }
 
 // process adds the ResponseTime & LatencyTime to the
