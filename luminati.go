@@ -155,6 +155,7 @@ func (c *Client) JSON(ctx context.Context, o Options) (Serps, Meta, error) {
 	if err != nil {
 		return Serps{}, meta, err
 	}
+	meta.Body = string(buf)
 
 	// Unmarshal into a response struct.
 	res := response{}
@@ -223,6 +224,7 @@ func (c *Client) HTML(ctx context.Context, o Options) (string, Meta, error) {
 	if err != nil {
 		return "", meta.process(), err
 	}
+	meta.Body = string(html)
 
 	// Store in cache
 	if c.HasCache {
